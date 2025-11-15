@@ -184,6 +184,27 @@ Expected:
 
 ---
 
-# assistant/assistant.py 
+# Task 4: assistant/assistant.py 
 
 **Description:**  
+The assistant bot now uses a unified `input_error` decorator to handle
+all user input mistakes without stopping the program.\
+The decorator catches:
+
+-   **KeyError** → returns `"Contact not found."`
+-   **ValueError** → returns `"Give me name and phone please."`
+-   **IndexError** → returns `"Enter the argument for the command."`
+
+All command handler functions (`add`, `change`, `phone`, `all`) are
+wrapped with this decorator.\
+This ensures stable work of the bot and clear feedback for incorrect
+input.
+
+**Example:**
+
+    Enter a command: add
+    Enter the argument for the command
+    Enter a command: add Bob 12345
+    Contact added.
+    Enter a command: phone Alice
+    Contact not found.

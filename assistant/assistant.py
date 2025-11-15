@@ -1,3 +1,20 @@
+def input_error(func):
+    def inner(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+
+        except KeyError:
+            return "Contact not found."
+
+        except ValueError:
+            return "Give me name and phone please."
+
+        except IndexError:
+            return "Enter the argument for the command."
+
+    return inner
+
+
 def parse_input(user_input):
     parts = user_input.split()
     cmd = parts[0].strip().lower()
@@ -5,31 +22,37 @@ def parse_input(user_input):
     return cmd, args
 
 
+@input_error
 def add_contact(args, contacts):
     if len(args) < 2:
-        return "Insufficient input. Use: add Name phone"
+        raise IndexError
     name, phone = args
     contacts[name] = phone
     return "Contact added."
 
 
+@input_error
 def change_contact(args, contacts):
     if len(args) < 2:
-        return "Insufficient input. Use: change Name new_phone"
+        raise IndexError
     name, phone = args
     if name not in contacts:
-        return "Contact not found."
+        raise KeyError
     contacts[name] = phone
     return "Contact updated."
 
 
+@input_error
 def show_phone(args, contacts):
     if len(args) < 1:
-        return "Input the name. Use: phone Name"
+        raise IndexError
     name = args[0]
-    return contacts.get(name, "Contact not found.")
+    if name not in contacts:
+        raise KeyError
+    return contacts[name]
 
 
+@input_error
 def show_all(contacts):
     if not contacts:
         return "No contacts found."
@@ -46,6 +69,11 @@ def main():
 
     while True:
         user_input = input("Enter a command: ")
+
+        if not user_input.strip():
+            print("Enter a command...")
+            continue
+
         command, args = parse_input(user_input)
 
         if command in ["close", "exit"]:
